@@ -5,6 +5,7 @@ const router = express.Router();
 const uid2 = require("uid2");
 const SHA256 = require("crypto-js/sha256");
 const encBase64 = require("crypto-js/enc-base64");
+const isAuthenticated = require("../middleware/isAuthenticated");
 router.use(formidable());
 
 router.post("/user/signup", async (req, res) => {
@@ -33,6 +34,44 @@ router.post("/user/signup", async (req, res) => {
     } else {
       res.status(400).json({ message: "email already exists" });
     }
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+});
+
+router.post("/user/login", async (req, res) => {
+  try {
+    const user = await User.findOne({ email: req.fields.email });
+    const newHash = SHA256(req.fields.password + user.salt).toString(encBase64);
+    if (newHash === user.hash) {
+      res.status(200).json({
+        id: user._id,
+        token: user.token,
+        username: user.username,
+        email: user.email,
+      });
+    } else {
+      res.status(401).json({ message: "Unhautorized" });
+    }
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+});
+
+router.post("/user/favorites", isAuthenticated, async (req, res) => {
+  try {
+    const user = await User.findOne({ token: req.fields.token });
+    console.log(user);
+    if (req.fields.comics) {
+      user.favorites.comics.push(req.fields.comics);
+      res.status(200).json({ message: "Added to favorites" });
+    } else if (req.fields.characters) {
+      user.favorites.characters.push(req.fields.characters);
+      res.status(200).json({ message: "Added to favorites" });
+    } else {
+      res.status(400).json({ message: "Something wrong with the favorite item" });
+    }
+    await user.save();
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
