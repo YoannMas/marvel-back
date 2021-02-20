@@ -1,7 +1,9 @@
 const express = require("express");
 const isAuthenticated = require("../middleware/isAuthenticated");
 const User = require("../models/User");
+const formidable = require("express-formidable");
 const router = express.Router();
+router.use(formidable());
 
 router.get("/favorites/:token", isAuthenticated, async (req, res) => {
   try {
@@ -44,30 +46,36 @@ router.get("/favorites/:token", isAuthenticated, async (req, res) => {
   }
 });
 
-router.delete("/favorites/remove", isAuthenticated, async (req, res) => {
+router.delete("/favorites/remove/:id", isAuthenticated, async (req, res) => {
+  console.log(req.params);
   try {
     const user = await User.findById(req.user._id);
-    if (req.fields.type === "comics") {
-      let indexToRemove;
-      user.favorites.comics.map((el, index) => {
-        if (el._id === req.fields.id) {
-          indexToRemove = index;
-        }
-      });
+    let tabToRemove;
+    let indexToRemove;
+
+    user.favorites.comics.map((el, index) => {
+      if (el._id === req.params.id) {
+        tabToRemove = 1;
+        indexToRemove = index;
+      }
+    });
+    user.favorites.characters.map((el, index) => {
+      if (el._id === req.params.id) {
+        tabToRemove = 2;
+        indexToRemove = index;
+      }
+    });
+
+    if (tabToRemove === 1) {
       user.favorites.comics.splice(indexToRemove, 1);
-    } else if (req.fields.type === "characters") {
-      let indexToRemove;
-      user.favorites.characters.map((el, index) => {
-        if (el._id === req.fields.id) {
-          indexToRemove = index;
-        }
-      });
+      res.status(200).json({ message: "Remove to fav" });
+    } else if (tabToRemove === 2) {
       user.favorites.characters.splice(indexToRemove, 1);
+      res.status(200).json({ message: "Remove to fav" });
     } else {
       res.status(400).json({ message: "Type invalid" });
     }
     await user.save();
-    res.status(200).json({ message: "Remove to fav" });
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
