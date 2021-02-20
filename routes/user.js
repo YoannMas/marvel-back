@@ -61,13 +61,32 @@ router.post("/user/login", async (req, res) => {
 router.post("/user/favorites", isAuthenticated, async (req, res) => {
   try {
     const user = await User.findOne({ token: req.fields.token });
-    console.log(user);
     if (req.fields.comics) {
-      user.favorites.comics.push(req.fields.comics);
-      res.status(200).json({ message: "Added to favorites" });
+      let checkFav = false;
+      user.favorites.comics.map((el) => {
+        if (el._id === req.fields.comics._id) {
+          checkFav = true;
+        }
+      });
+      if (checkFav) {
+        res.status(400).json({ message: "already in fav" });
+      } else {
+        user.favorites.comics.push(req.fields.comics);
+        res.status(200).json({ message: "Added to favorites" });
+      }
     } else if (req.fields.characters) {
-      user.favorites.characters.push(req.fields.characters);
-      res.status(200).json({ message: "Added to favorites" });
+      let checkFav = false;
+      user.favorites.characters.map((el) => {
+        if (el._id === req.fields.characters._id) {
+          checkFav = true;
+        }
+      });
+      if (checkFav) {
+        res.status(400).json({ message: "already in fav" });
+      } else {
+        user.favorites.characters.push(req.fields.characters);
+        res.status(200).json({ message: "Added to favorites" });
+      }
     } else {
       res.status(400).json({ message: "Something wrong with the favorite item" });
     }
