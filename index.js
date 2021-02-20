@@ -17,6 +17,8 @@ const charactersRoutes = require("./routes/characters");
 app.use(charactersRoutes);
 const userRoutes = require("./routes/user");
 app.use(userRoutes);
+const favoritesRoutes = require("./routes/favorites");
+app.use(favoritesRoutes);
 
 app.all("*", (req, res) => {
   res.status(404).json("Page not found");

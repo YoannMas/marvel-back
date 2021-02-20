@@ -60,7 +60,7 @@ router.post("/user/login", async (req, res) => {
 
 router.post("/user/favorites", isAuthenticated, async (req, res) => {
   try {
-    const user = await User.findOne({ token: req.fields.token });
+    const user = await User.findById(req.user._id);
     if (req.fields.comics) {
       let checkFav = false;
       user.favorites.comics.map((el) => {
