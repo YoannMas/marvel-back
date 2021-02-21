@@ -47,34 +47,32 @@ router.get("/favorites/:token", isAuthenticated, async (req, res) => {
 });
 
 router.delete("/favorites/remove/:id", isAuthenticated, async (req, res) => {
-  console.log(req.params);
   try {
     const user = await User.findById(req.user._id);
-    let tabToRemove;
+    let tabToRemove = false;
     let indexToRemove;
 
     user.favorites.comics.map((el, index) => {
       if (el._id === req.params.id) {
-        tabToRemove = 1;
+        tabToRemove = true;
         indexToRemove = index;
+        if (tabToRemove) {
+          user.favorites.comics.splice(indexToRemove, 1);
+          res.status(200).json({ message: "Remove to fav" });
+        }
       }
     });
     user.favorites.characters.map((el, index) => {
       if (el._id === req.params.id) {
-        tabToRemove = 2;
+        tabToRemove = true;
         indexToRemove = index;
+        if (tabToRemove) {
+          user.favorites.characters.splice(indexToRemove, 1);
+          res.status(200).json({ message: "Remove to fav" });
+        }
       }
     });
 
-    if (tabToRemove === 1) {
-      user.favorites.comics.splice(indexToRemove, 1);
-      res.status(200).json({ message: "Remove to fav" });
-    } else if (tabToRemove === 2) {
-      user.favorites.characters.splice(indexToRemove, 1);
-      res.status(200).json({ message: "Remove to fav" });
-    } else {
-      res.status(400).json({ message: "Type invalid" });
-    }
     await user.save();
   } catch (error) {
     res.status(400).json({ error: error.message });
