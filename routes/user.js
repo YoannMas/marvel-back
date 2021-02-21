@@ -58,6 +58,7 @@ router.post("/user/login", async (req, res) => {
   }
 });
 
+// Add a favorites to user
 router.post("/user/favorites", isAuthenticated, async (req, res) => {
   try {
     const user = await User.findById(req.user._id);

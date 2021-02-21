@@ -2,6 +2,7 @@ const express = require("express");
 const axios = require("axios");
 const router = express.Router();
 
+// Return comics
 router.get("/comics", async (req, res) => {
   try {
     let limit = 100;
@@ -25,6 +26,7 @@ router.get("/comics", async (req, res) => {
   }
 });
 
+// Return comics by character id
 router.get("/comics/:id", async (req, res) => {
   try {
     const id = req.params.id;

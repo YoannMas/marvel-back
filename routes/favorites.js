@@ -5,9 +5,11 @@ const formidable = require("express-formidable");
 const router = express.Router();
 router.use(formidable());
 
+// Return favorites user's fav item
 router.get("/favorites/:token", isAuthenticated, async (req, res) => {
   try {
     const user = await User.findOne({ token: req.params.token });
+    // Sort the array for displaying in alphebatic order
     const comics = user.favorites.comics.sort((a, b) => {
       let nameA = a.name;
       let nameB = b.name;
@@ -46,12 +48,14 @@ router.get("/favorites/:token", isAuthenticated, async (req, res) => {
   }
 });
 
+// Remove a fav item - might be in user routes
 router.delete("/favorites/remove/:id", isAuthenticated, async (req, res) => {
   try {
     const user = await User.findById(req.user._id);
     let tabToRemove = false;
     let indexToRemove;
 
+    // check in which list (character or comics) is this ID and remove it
     user.favorites.comics.map((el, index) => {
       if (el._id === req.params.id) {
         tabToRemove = true;

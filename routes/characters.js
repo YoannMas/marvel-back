@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const axios = require("axios");
 
+// Return characters
 router.get("/characters", async (req, res) => {
   try {
     let limit = 100;
