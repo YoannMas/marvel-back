@@ -12,6 +12,7 @@ More information about this project on <a href="https://github.com/YoannMas/marv
 - cors
 - crypto-js
 - uid2
+- dotenv
 
 ## Routes 
 
