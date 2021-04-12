@@ -37,7 +37,7 @@ More information about this project on <a href="https://github.com/YoannMas/marv
 Clone this repository 
 
 ```
-git clone https://github.com/YoannMas/deliveroo-front-redux.git
+git clone https://github.com/YoannMas/marvel-back.git
 ```
 
 Install dependencies
